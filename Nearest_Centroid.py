@@ -12,8 +12,8 @@ Created on Wed Nov  3 08:35:03 2021
 # Data can only be vizualised in 2D. 
 
 class Subclass_Nearest_Centroid:
-    def __init__(self, n_c):
-        self.n_clusters = n_c 
+    def __init__(self, n_clusters):
+        self.n_clusters = n_clusters 
         
     def fit(self, x_train, y_train):
         import numpy as np
@@ -24,11 +24,11 @@ class Subclass_Nearest_Centroid:
         y_label_train = [] * len(y_train)
         self.k_models = [None] * len(labels)
         
-        for i in range(len(labels)):
-            indexes = np.where(y_train == i)
+        for idx, lab in enumerate(labels):
+            indexes = np.where(y_train == lab)
             x_label_train.append(x_train[indexes])
             y_label_train.append(y_train[indexes])
-            self.k_models[i] = KMeans(self.n_clusters).fit(x_label_train[i])
+            self.k_models[idx] = KMeans(self.n_clusters).fit(x_label_train[idx])
             
             
     def predict(self, x_test):
@@ -40,7 +40,7 @@ class Subclass_Nearest_Centroid:
         # Loop through each x-value 
         # Find eucledian distance for each cluster 
         # Predict x-value with closest cluster model.
-        y_pred = np.array([None] * len(x_test))
+        y_pred = np.array([0] * len(x_test), dtype=int)
         
         for idx, x in enumerate(x_test): 
             current_best = float("inf")
@@ -55,3 +55,11 @@ class Subclass_Nearest_Centroid:
             
         return y_pred
             
+    def get_params(self, deep=True):
+        # suppose this estimator has parameters "alpha" and "recursive"
+        return {"clusters": self.n_clusters}
+
+    def set_params(self, **parameters):
+        for parameter, value in parameters.items():
+            setattr(self, parameter, value)
+        return self

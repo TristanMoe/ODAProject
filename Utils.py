@@ -9,11 +9,17 @@ class Utils:
     def __init__(self, use_mnist):
         from mnist import MNIST 
         from scipy.io import loadmat 
+        import numpy as np 
         
         if (use_mnist):
-            data = MNIST("data")
+            data = MNIST("data_mnist")
             self.x_train, self.y_train = np.array(data.load_training())
             self.x_test, self.y_test = np.array(data.load_testing())
+
+            self.x_train = np.array([i for i in self.x_train]).reshape(-1, 28*28) / 255
+            self.x_test = np.array([i for i in self.x_test]).reshape(-1, 28*28) / 255 
+            self.y_train = np.array([i for i in self.y_train], dtype=np.uint8).ravel()
+            self.y_test = np.array([i for i in self.y_test], dtype=np.uint8).ravel() 
         else:
             data = loadmat('mnist_loaded.mat')
             self.x_train = data["train_images"].transpose()
@@ -39,7 +45,6 @@ class Utils:
         return self.x_train_pca, self.x_test_pca
         
     def visualize_data(self):
-        import matplotlib
         import matplotlib.pyplot as plt 
         
         # Images and corresponding 
@@ -52,3 +57,4 @@ class Utils:
             plt.imshow(self.x_train[i].reshape((28,28)), cmap=plt.cm.binary)
             plt.xlabel(self.y_train[i])
         plt.show()
+            

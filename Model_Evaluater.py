@@ -39,10 +39,13 @@ class Model_Evaluater:
         self.model.fit(self.x_train, self.y_train)
         y_test_pred = self.model.predict(self.x_test) 
 
+        classification_report = metrics.classification_report(self.y_test, y_test_pred)
         print(
             f"Classification report for classifier {self.model}:\n"
-            f"{metrics.classification_report(self.y_test, y_test_pred)}\n"
+            f"{classification_report}\n"
         )
+        
+        return classification_report
 
     def display_precision_recall_curve(self):
         from sklearn.metrics import precision_recall_curve
@@ -78,7 +81,7 @@ class Model_Evaluater:
         
         # Plot the actual class versus class centroids. 
         plt.scatter(self.x_test_pca[:, 0], self.x_test_pca[:, 1], c=self.y_test, cmap=matplotlib.colors.ListedColormap(self.colors), edgecolor="k", s=20)
-        plt.title("Centroids versus actual classification")
+        plt.title("TRAIN centroids versus actual TEST classification")
         plt.axis("tight")
         
         plt.show() 
@@ -96,6 +99,7 @@ class Model_Evaluater:
         import matplotlib.pyplot as plt 
         import numpy as np 
         labels = np.arange(10)
+        plt.title("Train data and class label")
         plt.scatter(self.x_train_pca[:, 0],  self.x_train_pca[:, 1], c=self.y_train, cmap=matplotlib.colors.ListedColormap(self.colors))
 
         cb = plt.colorbar()

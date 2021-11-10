@@ -10,14 +10,15 @@ Created on Wed Nov  3 08:35:03 2021
 # Each class is represented by its centroid
 # New samples are classified based on nearest class centroid. 
 # Data can only be vizualised in 2D. 
-
+from sklearn.model_selection import StratifiedKFold
+import numpy as np
+from sklearn.cluster import KMeans
+from sklearn.metrics import accuracy_score
 class Subclass_Nearest_Centroid:
-    def __init__(self, n_clusters):
+    def __init__(self, n_clusters = 2):
         self.n_clusters = n_clusters 
         
     def fit(self, x_train, y_train):
-        import numpy as np
-        from sklearn.cluster import KMeans
         # Unsupervised cluster creation based on class segments
         labels = np.unique(y_train)
         x_label_train = [] * len(x_train)
@@ -32,7 +33,6 @@ class Subclass_Nearest_Centroid:
             
             
     def predict(self, x_test):
-        import numpy as np
         m_centroid = [None] * len(self.k_models)
         for idx, m in enumerate(self.k_models):
             m_centroid[idx] = m.cluster_centers_
@@ -55,6 +55,25 @@ class Subclass_Nearest_Centroid:
             
         return y_pred
             
+    def grid_search_kfold(self, x_train, y_train, parameters):
+        kf = StratifiedKFold(n_splits=5)
+        best_score = -1
+        best_parameter = -1
+        
+        for value in parameters:
+            for train_index, test_index in kf.split(x_train, y_train):
+                x_cv_train, x_cv_test = x_train[train_index], x_train[test_index]
+                y_cv_train, y_cv_test = y_train[train_index], y_train[test_index]
+                self.n_clusters = value 
+                self.fit(x_cv_train, y_cv_train) 
+                y_pred = self.predict(x_cv_test) 
+                score = accuracy_score(y_cv_test, y_pred, normalize=True)
+                if (best_score < score):
+                    best_score = score
+                    best_parameter = value 
+        
+        return {"Best Score":best_score, "Best Parameter":best_parameter}
+        
     def get_params(self, deep=True):
         # suppose this estimator has parameters "alpha" and "recursive"
         return {"clusters": self.n_clusters}

@@ -1,10 +1,17 @@
 # Inspired by: "Hands-On Machine Learning with Scikit-Learn, Keras & TensorFlow"
 
+import matplotlib
+import matplotlib.pyplot as plt 
+from sklearn.decomposition import PCA
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import precision_recall_curve
+import numpy as np 
+from sklearn import metrics 
+from sklearn.metrics import accuracy_score
 # Uses supervised methods. 
 class Model_Evaluater: 
 
     def __init__(self, x_train, y_train, x_test, y_test, model, colors):
-        from sklearn.decomposition import PCA 
         self.x_train = x_train
         self.y_train = y_train
         self.x_test = x_test
@@ -15,11 +22,7 @@ class Model_Evaluater:
         self.x_train_pca = pca.fit_transform(self.x_train) 
         self.x_test_pca = pca.fit_transform(self.x_test) 
 
-    def visualize_confusion_matrix(self):  
-        from sklearn.metrics import confusion_matrix
-        import matplotlib.pyplot as plt 
-        import numpy as np 
-        
+    def visualize_confusion_matrix(self):
         self.model.fit(self.x_train, self.y_train)
         y_test_pred = self.model.predict(self.x_test) 
         
@@ -34,8 +37,6 @@ class Model_Evaluater:
         plt.show() 
                         
     def print_classification_report(self):
-        from sklearn import metrics 
-        
         self.model.fit(self.x_train, self.y_train)
         y_test_pred = self.model.predict(self.x_test) 
 
@@ -45,12 +46,9 @@ class Model_Evaluater:
             f"{classification_report}\n"
         )
         
-        return classification_report
+        return accuracy_score(self.y_test, y_test_pred, normalize=True)
 
-    def display_precision_recall_curve(self):
-        from sklearn.metrics import precision_recall_curve
-        import matplotlib.pyplot as plt 
-        
+    def display_precision_recall_curve(self):        
         self.model.fit(self.x_train, self.y_train)
         y_test_pred = self.model.predict(self.x_test) 
         
@@ -61,9 +59,6 @@ class Model_Evaluater:
         
     # Must be 2-Dimensional, i.e. using PCA.    
     def display_cluster_allocations(self):
-        import numpy as np 
-        import matplotlib
-        import matplotlib.pyplot as plt 
         h = 0.2 # Step size
         
         self.model.fit(self.x_train_pca, self.y_train)
@@ -94,10 +89,7 @@ class Model_Evaluater:
         plt.show() 
 
     # Must be 2-Dimensional, i.e. using PCA.       
-    def display_scatter(self):
-        import matplotlib
-        import matplotlib.pyplot as plt 
-        import numpy as np 
+    def display_scatter(self): 
         labels = np.arange(10)
         plt.title("Train data and class label")
         plt.scatter(self.x_train_pca[:, 0],  self.x_train_pca[:, 1], c=self.y_train, cmap=matplotlib.colors.ListedColormap(self.colors))

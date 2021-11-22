@@ -24,7 +24,7 @@ class Utils:
             self.y_train = np.array([i for i in self.y_train], dtype=np.uint8).ravel()
             self.y_test = np.array([i for i in self.y_test], dtype=np.uint8).ravel() 
             self.name = "MNIST"
-            self.colors = ['red', 'green', 'blue', 'purple', 'yellow', 'pink', 'cyan', 'teal', 'violet']
+            self.colors = ['red', 'green', 'blue', 'purple', 'yellow', 'pink', 'cyan', 'teal', 'violet', 'black']
         else:
             data = loadmat('data_orl/orl_data.mat')["data"].transpose()
             labels = loadmat('data_orl/orl_lbls.mat')["lbls"].ravel()
@@ -81,7 +81,7 @@ class Utils:
             plt.imshow(self.x_train[i].reshape((28,28)), cmap=plt.cm.binary)
             plt.xlabel(self.y_train[i])
         plt.show()
-            
+
     def grid_search(self, model, x_train, y_train, parameters):         
         grid_model = GridSearchCV(model, parameters)
         grid_model.fit(x_train, y_train)
